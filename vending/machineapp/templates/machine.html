@@ -13,7 +13,7 @@
     <form action="/charge/" method="POST">
         {% csrf_token %}
         <input type="text" name="charge">
-        <input type="hidden" name="deposit" value="{{ deposit }}">
+        <input type="hidden" name="deposit" value={{ deposit }}>
         <input type="submit" value="入金">
     </form>
 
@@ -24,21 +24,20 @@
             <th>価格</th>
             <th></th>
         </tr>
-        <tr>
-            {% for item in objects_list %}
-                {% if deposit >= item.cost  %}
-                    <td>{{ item.name }}</td>
-                    <td>{{ item.text }}</td>
-                    <td>{{ item.cost }}</td>
-                    <td>商品番号{{ item.id }} <form action="/change/" method="POST"><input type="submit" value="買う"></form></td>
-                {% endif %}
-            {% endfor %}
-        </tr>
+        {% for item in item_list %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.text }}</td>
+                <td>{{ item.cost }}</td>
+                <td>商品番号{{ item.id }} 
+                <form action="/purchase/" method="POST"><input type="submit" value="買う"></form></td>
+            </tr>          
+        {% endfor %}
     </table>
 
     <form action="/change/" method="post">
         {% csrf_token %}
-        <input type="submit" value="おつり">
+        <input type="submit" name="change" value="おつり">
     </form>
 
     <h4>買ったものリスト</h4>
@@ -48,8 +47,10 @@
             <th>価格</th>
         </tr>
         <tr>
-            <td>{{ item_list }}</td>
+            <td>{{ itemlist }}</td>
         </tr>
     </table>
+
+    <a href="/">トップに戻る</a>
 </body>
 </html>

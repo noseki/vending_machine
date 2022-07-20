@@ -1,51 +1,65 @@
 from django.shortcuts import render
 from .models import Items
 
+def get_post_value(request, key):
+    try:
+        value = request.POST.get(key)
+        return int(value)
+    except:
+        return 0
+
 def index_view(request):
     return render(request, 'index.html')
 
 def top_view(request):
-    return render(request, 'machine.html')
-
-def vending_machine(request):
-
-    _deposit = 0
-
-    if (request.POST.get('deposit') != ""):
-        tmp = request.POST.get('deposit')
-        _deposit = int(tmp)
-
-    _items = Items.objects.all()
+    deposit = 0
 
     context = {
-        "deposit":_deposit,
-        "items":_items,
-    }
-
+        "deposit":deposit
+            }
     return render(request, 'machine.html', context)
 
 def charge(request):
 
-    tmp1 = request.POST.get('deposit')
-    _deposit = int(tmp1)
+    old_deposit = get_post_value(request, 'deposit')
+    charge_value = get_post_value(request, 'charge')
 
-    if (request.POST.get('charge') != ""):
-        tmp2 = request.POST.get('charge')
-        _deposit += int(tmp2)
+    new_deposit = old_deposit + charge_value
 
-    _items = Items.objects.all()
+    item_list = Items.objects.filter(cost__lt=new_deposit)
 
     context = {
-        "deposit":_deposit,
-        "items":_items,
+        "deposit":new_deposit,
+        "item_list":item_list,
     }
-    return render(request, 'machine.html')
+    return render(request, 'machine.html', context)
 
 def purchase(request):
+
+    old_deposit = get_post_value(request, 'deposit')
+    charge_value = get_post_value(request, 'charge')
+
+    new_deposit = old_deposit + charge_value
+
+    flagrant_deposit = new_deposit - Items.cost
+    item_list = Items.objects.filter(cost__lt=new_deposit)
+
+    context = {
+        "deposit":flagrant_deposit,
+        "item_list":item_list,
+    }
+
+
     return render(request, 'machine.html')
 
 def change(request):
 
+    change = 0
 
-    return render(request, 'machine.html')
+    context = {
+        "deposit":change,
+    }
+
+    return render(request, 'machine.html', context)
+
 
