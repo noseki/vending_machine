@@ -22,15 +22,24 @@
             <th>名前</th>
             <th>説明</th>
             <th>価格</th>
-            <th></th>
+            <th colspan="1"></th>
         </tr>
         {% for item in item_list %}
             <tr>
                 <td>{{ item.name }}</td>
                 <td>{{ item.text }}</td>
                 <td>{{ item.cost }}</td>
-                <td>商品番号{{ item.id }} 
-                <form action="/purchase/" method="POST"><input type="submit" value="買う"></form></td>
+                <td> 
+                    <form action="/purchase/" method="POST">
+                        {% csrf_token %}
+                        商品番号:{{ item.id }}
+                        <input type="hidden" name="deposit" value={{ deposit }}>
+                        <input type="hidden" name="name" value={{ item.name }}>
+                        <input type="hidden" name="cost" value={{ item.cost }}>
+                        <input type="hidden" name="id" value={{ item.id }}>
+                        <input type="submit" value="買う">
+                    </form>
+                </td>
             </tr>          
         {% endfor %}
     </table>
@@ -46,9 +55,12 @@
             <th>商品名</th>
             <th>価格</th>
         </tr>
+        {% for item in purchase_list %}
         <tr>
-            <td>{{ itemlist }}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.cost }}</td>
         </tr>
+        {% endfor %}
     </table>
 
     <a href="/">トップに戻る</a>

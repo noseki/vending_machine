@@ -4,7 +4,6 @@ class Items(models.Model):
     name = models.CharField(max_length=100)
     text = models.CharField(max_length=100)
     cost = models.IntegerField()
-    index_number = models.IntegerField()
 
     def __str__(self):
-        return "名前:" + self.name + " " + "説明:" + self.text + " " ;
+       return "名前:" + self.name + " " + "説明:" + self.text + " " ;

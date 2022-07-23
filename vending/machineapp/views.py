@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from .models import Items
 
+purchase_list = []
+
 def get_post_value(request, key):
     try:
         value = request.POST.get(key)
@@ -26,7 +28,7 @@ def charge(request):
 
     new_deposit = old_deposit + charge_value
 
-    item_list = Items.objects.filter(cost__lt=new_deposit)
+    item_list = Items.objects.filter(cost__lte=new_deposit)
 
     context = {
         "deposit":new_deposit,
@@ -36,21 +38,25 @@ def charge(request):
 
 def purchase(request):
 
-    old_deposit = get_post_value(request, 'deposit')
-    charge_value = get_post_value(request, 'charge')
+    before_deposit = get_post_value(request, 'deposit')
+    purchase_cost = get_post_value(request, 'cost')
 
-    new_deposit = old_deposit + charge_value
+    now_deposit = before_deposit - purchase_cost
 
-    flagrant_deposit = new_deposit - Items.cost
-    item_list = Items.objects.filter(cost__lt=new_deposit)
+    item_list = Items.objects.filter(cost__lte=now_deposit)
+
+    purchase = Items.objects.filter(id=request.POST.get("id"))
+
+    #purchase_list.append(purchase)
 
     context = {
-        "deposit":flagrant_deposit,
+        "deposit":now_deposit,
         "item_list":item_list,
+        "purchase_list":purchase,
     }
 
 
-    return render(request, 'machine.html')
+    return render(request, 'machine.html', context)
 
 def change(request):
 
