@@ -30,9 +30,18 @@ def charge(request):
 
     item_list = Items.objects.filter(cost__lte=new_deposit)
 
+    purchase_item = Items.objects.filter(id=request.POST.get("id"))
+    purchase_list = request.session.get('purchase_list', [])
+
+    if 0 < len(purchase_item):
+        purchase_list.append(purchase_item[0])
+
+    request.session['purchase_list'] = purchase_list
+
     context = {
         "deposit":new_deposit,
         "item_list":item_list,
+        "purchase_list":purchase_list,
     }
     return render(request, 'machine.html', context)
 
@@ -45,14 +54,18 @@ def purchase(request):
 
     item_list = Items.objects.filter(cost__lte=now_deposit)
 
-    purchase = Items.objects.filter(id=request.POST.get("id"))
+    purchase_item = Items.objects.filter(id=request.POST.get("id"))
+    purchase_list = request.session.get('purchase_list', [])
 
-    #purchase_list.append(purchase)
+    if 0 < len(purchase_item):
+        purchase_list.append(purchase_item[0])
+
+    request.session['purchase_list'] = purchase_list
 
     context = {
         "deposit":now_deposit,
         "item_list":item_list,
-        "purchase_list":purchase,
+        "purchase_list":purchase_list,
     }
 
 
